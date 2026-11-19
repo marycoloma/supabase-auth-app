@@ -49,9 +49,9 @@ export default function Home() {
             <Link href="/sign-in" style={styles.link}>
               Sign in
             </Link>
-            {/* <Link href="/sign-up" style={styles.link}>
+            <Link href="/sign-up" style={styles.link}>
               Sign up
-            </Link> */}
+            </Link>
           </>
         )}
       </View>
