@@ -1,48 +1,76 @@
-import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
-import { supabase } from "../lib/supabase";
+import { Link } from "expo-router";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { useAuth } from '../../context/AuthProvider';
 
-export default function Index() {
-  const [publicData, setPublicData] = useState<string>("Loading...");
-  const [protectedData, setProtectedData] = useState<string>("Loading...");
 
-  useEffect(() => {
-    supabase
-      .from("Sample Table")
-      .select("*")
-      .then(({ data, error }) => {
-        setPublicData(
-          error ? `Error: ${error.message}` : JSON.stringify(data, null, 2),
-        );
-      });
+type Instrument = {
+  id: number;
+  name: string;
+};
 
-    supabase
-      .from("resources")
-      .select("*")
-      .then(({ data, error }) => {
-        setProtectedData(
-          error ? `Error: ${error.message}` : JSON.stringify(data, null, 2),
-        );
-      });
-  }, []);
+export default function Home() {
+  const { session } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   async function getInstruments() {
+  //     const { data, error } = await supabase.from("instruments").select();
+
+  //     if (error) {
+  //       setError(error.message);
+  //       return;
+  //     }
+
+  //     setInstruments(data ?? []);
+  //   }
+  //   getInstruments();
+  // }, []);
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error loading instruments: {error}</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>
-        Sample Table (public — should show 4 names)
-      </Text>
-      <Text style={styles.code}>{publicData}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Home Page</Text>
 
-      <Text style={styles.heading}>
-        resources (protected — should be [] when logged out)
-      </Text>
-      <Text style={styles.code}>{protectedData}</Text>
-    </ScrollView>
+      <View style={styles.nav}>
+        {session ? (
+          <Link href="/profile" style={styles.link}>
+            View your profile
+          </Link>
+        ) : (
+          <>
+            <Link href="/sign-in" style={styles.link}>
+              Sign in
+            </Link>
+            {/* <Link href="/sign-up" style={styles.link}>
+              Sign up
+            </Link> */}
+          </>
+        )}
+      </View>
+{/* 
+      <Text style={styles.heading}>Instruments (public)</Text>
+      <FlatList
+        data={instruments}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <Text style={styles.item}>{item.name}</Text>}
+      /> */}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, paddingTop: 60 },
-  heading: { fontSize: 16, fontWeight: "bold", marginTop: 20, marginBottom: 8 },
-  code: { fontFamily: "monospace", fontSize: 12 },
+  container: { flex: 1, padding: 24 },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 12 },
+  nav: { flexDirection: "row", gap: 16, marginBottom: 24 },
+  link: { fontSize: 16, color: "#1565c0", textDecorationLine: "underline" },
+  heading: { fontSize: 20, fontWeight: "bold", marginBottom: 8 },
+  item: { fontSize: 16, paddingVertical: 4 },
 });
