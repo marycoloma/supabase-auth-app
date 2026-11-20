@@ -1,3 +1,4 @@
+import { colors, theme } from "@/constants/app-theme";
 import { supabase } from "@/lib/supabase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "expo-router";
@@ -5,8 +6,8 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
-  Button,
-  StyleSheet,
+  Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -107,108 +108,146 @@ export default function SignUpScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Our team</Text>
-      {membersLoading ? (
-        <ActivityIndicator />
-      ) : (
-        members.map((member) => <Text key={member.id}>• {member.name}</Text>)
-      )}
+    <ScrollView
+      contentContainerStyle={theme.screen}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={theme.card}>
+        <Text style={theme.title}>Create an account</Text>
+        <Text style={theme.subtitle}>
+          Join to unlock members-only resources
+        </Text>
 
-      <Text style={styles.heading}>Sign up</Text>
+        {/* Public data from Sample Table */}
+        <View style={theme.infoBox}>
+          <Text style={theme.infoTitle}>Meet our team</Text>
+          {membersLoading ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : (
+            members.map((member) => (
+              <Text key={member.id} style={{ color: colors.text }}>
+                🌿 {member.name}
+              </Text>
+            ))
+          )}
+        </View>
 
-      <Controller
-        control={control}
-        name="name"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Full name"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
+        {error && (
+          <View style={theme.errorBox}>
+            <Text style={theme.errorBoxText}>{error}</Text>
+          </View>
         )}
-      />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
-
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            autoComplete="email"
-          />
+        {message && (
+          <View style={theme.successBox}>
+            <Text style={theme.successBoxText}>{message}</Text>
+          </View>
         )}
-      />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            secureTextEntry
-            autoCapitalize="none"
-          />
+        <Text style={theme.label}>Full name</Text>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[theme.input, errors.name && theme.inputError]}
+              placeholder="Jane Doe"
+              placeholderTextColor={colors.muted}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+            />
+          )}
+        />
+        {errors.name && (
+          <Text style={theme.fieldError}>{errors.name.message}</Text>
         )}
-      />
-      {errors.password && (
-        <Text style={styles.error}>{errors.password.message}</Text>
-      )}
 
-      <Controller
-        control={control}
-        name="confirmPassword"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm password"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            secureTextEntry
-            autoCapitalize="none"
-          />
+        <Text style={theme.label}>Email</Text>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[theme.input, errors.email && theme.inputError]}
+              placeholder="you@example.com"
+              placeholderTextColor={colors.muted}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              autoComplete="email"
+            />
+          )}
+        />
+        {errors.email && (
+          <Text style={theme.fieldError}>{errors.email.message}</Text>
         )}
-      />
-      {errors.confirmPassword && (
-        <Text style={styles.error}>{errors.confirmPassword.message}</Text>
-      )}
 
-      {error && <Text style={styles.error}>{error}</Text>}
-      {message && <Text style={styles.success}>{message}</Text>}
+        <Text style={theme.label}>Password</Text>
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[theme.input, errors.password && theme.inputError]}
+              placeholder="At least 8 characters"
+              placeholderTextColor={colors.muted}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          )}
+        />
+        {errors.password && (
+          <Text style={theme.fieldError}>{errors.password.message}</Text>
+        )}
 
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <Button title="Sign up" onPress={() => handleSubmit(onSubmit)()} />
-      )}
+        <Text style={theme.label}>Confirm password</Text>
+        <Controller
+          control={control}
+          name="confirmPassword"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[theme.input, errors.confirmPassword && theme.inputError]}
+              placeholder="Re-enter your password"
+              placeholderTextColor={colors.muted}
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          )}
+        />
+        {errors.confirmPassword && (
+          <Text style={theme.fieldError}>{errors.confirmPassword.message}</Text>
+        )}
 
-      <Link href="/sign-in" style={styles.link}>
-        Already have an account? Sign in
-      </Link>
-    </View>
+        <Pressable
+          style={({ pressed }) => [
+            theme.button,
+            (pressed || loading) && theme.buttonPressed,
+          ]}
+          onPress={() => handleSubmit(onSubmit)()}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={colors.white} />
+          ) : (
+            <Text style={theme.buttonText}>Sign up</Text>
+          )}
+        </Pressable>
+
+        <View style={theme.footer}>
+          <Text style={theme.muted}>Already have an account? </Text>
+          <Link href="/sign-in" style={theme.link}>
+            Sign in
+          </Link>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, gap: 12 },
-  heading: { fontSize: 18, fontWeight: "bold" },
-  input: { borderWidth: 1, borderColor: "#999", borderRadius: 6, padding: 10 },
-  error: { color: "crimson" },
-  success: { color: "green" },
-  link: { color: "#1565c0" },
-});
