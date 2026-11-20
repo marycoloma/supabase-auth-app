@@ -4,28 +4,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from '../../context/AuthProvider';
 
 
-type Instrument = {
-  id: number;
-  name: string;
-};
-
 export default function Home() {
   const { session } = useAuth();
   const [error, setError] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   async function getInstruments() {
-  //     const { data, error } = await supabase.from("instruments").select();
-
-  //     if (error) {
-  //       setError(error.message);
-  //       return;
-  //     }
-
-  //     setInstruments(data ?? []);
-  //   }
-  //   getInstruments();
-  // }, []);
 
   if (error) {
     return (
@@ -40,11 +21,9 @@ export default function Home() {
       <Text style={styles.title}>Home Page</Text>
 
       <View style={styles.nav}>
-        {session ? (
-          <Link href="/profile" style={styles.link}>
-            View your profile
-          </Link>
-        ) : (
+        {session ? 
+          <View/>
+         : 
           <>
             <Link href="/sign-in" style={styles.link}>
               Sign in
@@ -53,24 +32,17 @@ export default function Home() {
               Sign up
             </Link>
           </>
-        )}
+        }
       </View>
-{/* 
-      <Text style={styles.heading}>Instruments (public)</Text>
-      <FlatList
-        data={instruments}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Text style={styles.item}>{item.name}</Text>}
-      /> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24 },
+  container: { flex: 1, padding: 24, justifyContent:"center", alignItems:"center"},
   title: { fontSize: 28, fontWeight: "bold", marginBottom: 12 },
-  nav: { flexDirection: "row", gap: 16, marginBottom: 24 },
-  link: { fontSize: 16, color: "#1565c0", textDecorationLine: "underline" },
+  nav: { gap: 16, marginBottom: 24 },
+  link: { fontSize: 16, backgroundColor: "blue", color:"white", padding:"5px", borderRadius:"4px"  },
   heading: { fontSize: 20, fontWeight: "bold", marginBottom: 8 },
   item: { fontSize: 16, paddingVertical: 4 },
 });

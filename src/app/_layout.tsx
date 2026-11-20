@@ -16,7 +16,7 @@ function RootNavigator() {
 
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: "Page" }} />
+      <Stack.Screen name="index" options={{ title: "Home Page" }} />
 
       <Stack.Protected guard={!session}>
         <Stack.Screen name="sign-in" options={{ title: "Sign in" }} />
@@ -39,9 +39,5 @@ export default function TabLayout() {
     <AuthProvider>
       <RootNavigator/>
     </AuthProvider>
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    //   <AnimatedSplashOverlay />
-    //   <AppTabs />
-    // </ThemeProvider>
   );
 }
