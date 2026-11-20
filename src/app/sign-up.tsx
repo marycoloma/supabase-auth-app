@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Button,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -53,10 +54,12 @@ export default function SignUp() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.form}>
-        <Text style={styles.heading}>Sign Up</Text>
-
         {/* Email field */}
         <Controller
           control={control}
@@ -65,10 +68,12 @@ export default function SignUp() {
             <TextInput
               style={styles.input}
               placeholder="Email"
+              placeholderTextColor="#777"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
               autoCapitalize="none"
+              autoCorrect={false}
               keyboardType="email-address"
               autoComplete="email"
             />
@@ -87,6 +92,7 @@ export default function SignUp() {
             <TextInput
               style={styles.input}
               placeholder="Password"
+              placeholderTextColor="#777"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -109,6 +115,7 @@ export default function SignUp() {
             <TextInput
               style={styles.input}
               placeholder="Confirm Password"
+              placeholderTextColor="#777"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -139,22 +146,18 @@ export default function SignUp() {
       <Link href="/sign-in" style={styles.link}>
         Already have an account? Sign in
       </Link>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 24,
     gap: 12,
   },
   form: {
     gap: 12,
-  },
-  heading: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
   input: {
     borderWidth: 1,

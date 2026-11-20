@@ -1,56 +1,110 @@
-# Welcome to your Expo app 👋
+# Supabase Authentication App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Project Overview
 
-## Get started
+This project is a mobile application built with Expo and React Native. It uses Supabase for user authentication and provides a protected area that users can access after signing in.
 
-1. Install dependencies
+## Features
+
+- User registration with email and password
+- User sign-in and sign-out
+- Form validation using Zod
+- Form handling using React Hook Form
+- Protected routes for authenticated users
+- User profile displaying account information
+- Resources list retrieved from Supabase
+
+## Technologies Used
+
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Supabase
+- React Hook Form
+- Zod
+
+## Prerequisites
+
+Before running the application, make sure you have installed:
+
+- Node.js and npm
+- Expo Go (for testing on a mobile device)
+- A Supabase account and project
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone YOUR_REPOSITORY_URL
+   ```
+
+2. Navigate into the project folder:
+
+   ```bash
+   cd YOUR_PROJECT_FOLDER
+   ```
+
+3. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+4. Create a `.env` file in the root project directory.
 
-   ```bash
-   npx expo start
+5. Add your Supabase project credentials:
+
+   ```env
+   EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_or_anon_key
    ```
 
-In the output, you'll find options to open the app in a
+   Use the exact variable names expected by `src/lib/supabase.ts`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Running the Application
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Start the Expo development server:
 
 ```bash
-npm run reset-project
+npx expo start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+To run the application:
 
-### Other setup steps
+- Press `w` to open the web version.
+- Scan the QR code using Expo Go to run it on a mobile device.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Supabase Configuration
 
-## Learn more
+The application uses Supabase Authentication to manage user accounts.
 
-To learn more about developing your project with Expo, look at the following resources:
+To configure the application:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. Create a Supabase project.
+2. Copy the project URL and publishable/anon key.
+3. Add these credentials to your local `.env` file.
+4. Ensure the required database tables are created in Supabase.
+5. Configure Row Level Security (RLS) policies to protect user data.
 
-## Join the community
+## Authentication and Protected Routes
 
-Join our community of developers creating universal apps.
+The application uses an authentication context to track the current user's session.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Signed-out users can access the sign-in and sign-up screens.
+- Signed-in users can access the protected profile area.
+- Users can sign out to end their session.
+- Zod schemas validate form input before authentication requests are submitted.
+
+## Environment Variables
+
+Do not commit your `.env` file or expose private credentials.
+
+The `.env.example` file provides a template showing which environment variables are required. Each developer should create their own local `.env` file.
+
+## Contributors
+
+- Mary Ann Coloma
+- Camille Tsui
+- Munachi Amadike
