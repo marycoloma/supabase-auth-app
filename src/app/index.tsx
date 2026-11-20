@@ -1,48 +1,108 @@
-import { Link } from "expo-router";
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useAuth } from '../../context/AuthProvider';
+import { supabase } from "@/lib/supabase";
+import { Stack, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { useAuth } from "../../context/AuthProvider";
 
+type Resource = { id: number; title: string; description: string | null };
 
-export default function Home() {
+export default function HomeScreen() {
   const { session } = useAuth();
+  const router = useRouter();
+
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (error) {
+  // Name saved at sign-up, or the email if there is no name
+  const displayName =
+    session?.user.user_metadata?.full_name ?? session?.user.email;
+
+  // Load the protected data only when the user is logged in
+  useEffect(() => {
+    if (!session) {
+      setResources([]);
+      return;
+    }
+
+    async function loadResources() {
+      setLoading(true);
+      setError(null);
+      const { data, error } = await supabase
+        .from("resources")
+        .select("id, title, description")
+        .order("id");
+      if (error) setError("Could not load resources. " + error.message);
+      else setResources(data ?? []);
+      setLoading(false);
+    }
+    loadResources();
+  }, [session]);
+
+  // Logged out: show the Sign in / Sign up buttons
+  if (!session) {
     return (
-      <View style={styles.container}>
-        <Text>Error loading instruments: {error}</Text>
+      <View style={styles.center}>
+        <Stack.Screen options={{ title: "Home Page" }} />
+        <Text style={styles.heading}>Home Page</Text>
+        <Button title="Sign in" onPress={() => router.push("/sign-in")} />
+        <Button title="Sign up" onPress={() => router.push("/sign-up")} />
       </View>
     );
   }
 
+  // Logged in: show the user's name in the nav bar and the protected list
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home Page</Text>
+      <Stack.Screen
+        options={{
+          title: `Hi, ${displayName}`,
+          headerRight: () => (
+            <Button title="Sign out" onPress={() => router.push("/sign-out")} />
+          ),
+        }}
+      />
 
-      <View style={styles.nav}>
-        {session ? 
-          <View/>
-         : 
-          <>
-            <Link href="/sign-in" style={styles.link}>
-              Sign in
-            </Link>
-            <Link href="/sign-up" style={styles.link}>
-              Sign up
-            </Link>
-          </>
+      <Text style={styles.heading}>Members-only resources</Text>
+
+      {loading && <ActivityIndicator />}
+      {error && <Text style={styles.error}>{error}</Text>}
+
+      <FlatList
+        data={resources}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.title}>{item.title}</Text>
+            {item.description && <Text>{item.description}</Text>}
+          </View>
+        )}
+        ListEmptyComponent={
+          loading ? undefined : <Text>No resources found.</Text>
         }
-      </View>
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent:"center", alignItems:"center"},
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 12 },
-  nav: { gap: 16, marginBottom: 24 },
-  link: { fontSize: 16, backgroundColor: "blue", color:"white", padding:"5px", borderRadius:"4px"  },
-  heading: { fontSize: 20, fontWeight: "bold", marginBottom: 8 },
-  item: { fontSize: 16, paddingVertical: 4 },
+  center: { flex: 1, justifyContent: "center", alignItems: "center", gap: 12 },
+  container: { flex: 1, padding: 24, gap: 12 },
+  heading: { fontSize: 18, fontWeight: "bold" },
+  card: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 6,
+    padding: 12,
+    marginBottom: 8,
+  },
+  title: { fontWeight: "bold" },
+  error: { color: "crimson" },
 });
