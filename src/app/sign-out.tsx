@@ -1,9 +1,11 @@
+import { colors, theme } from "@/constants/app-theme";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Button,
-  StyleSheet,
+  Pressable,
+  ScrollView,
   Text,
   View,
 } from "react-native";
@@ -11,6 +13,7 @@ import { useAuth } from "../../context/AuthProvider";
 
 export default function SignOutScreen() {
   const { session } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +28,7 @@ export default function SignOutScreen() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) setError("Could not sign out. Please try again.");
-      // On success, the session becomes null and the layout sends the user to Sign in
+      // On success, the session becomes null and the layout shows the public screens
     } catch {
       setError("Network error. Check your internet connection and try again.");
     }
@@ -34,23 +37,48 @@ export default function SignOutScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Signed in as</Text>
-      <Text>{displayName}</Text>
+    <ScrollView contentContainerStyle={theme.screen}>
+      <View style={theme.card}>
+        <Text style={theme.title}>Sign out</Text>
+        <Text style={theme.subtitle}>Are you sure you want to leave?</Text>
 
-      {error && <Text style={styles.error}>{error}</Text>}
+        <View style={theme.infoBox}>
+          <Text style={theme.muted}>Signed in as</Text>
+          <Text style={theme.infoTitle}>{displayName}</Text>
+          {session?.user.email && (
+            <Text style={theme.muted}>{session.user.email}</Text>
+          )}
+        </View>
 
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <Button title="Sign out" onPress={handleSignOut} />
-      )}
-    </View>
+        {error && (
+          <View style={theme.errorBox}>
+            <Text style={theme.errorBoxText}>{error}</Text>
+          </View>
+        )}
+
+        <Pressable
+          style={({ pressed }) => [
+            theme.button,
+            (pressed || loading) && theme.buttonPressed,
+          ]}
+          onPress={handleSignOut}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={colors.white} />
+          ) : (
+            <Text style={theme.buttonText}>Sign out</Text>
+          )}
+        </Pressable>
+
+        <Pressable
+          style={theme.buttonOutline}
+          onPress={() => router.back()}
+          disabled={loading}
+        >
+          <Text style={theme.buttonOutlineText}>Cancel</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, gap: 12 },
-  heading: { fontSize: 18, fontWeight: "bold" },
-  error: { color: "crimson" },
-});

@@ -1,10 +1,11 @@
+import { colors, theme } from "@/constants/app-theme";
 import { supabase } from "@/lib/supabase";
 import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Button,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   View,
@@ -46,46 +47,84 @@ export default function HomeScreen() {
     loadResources();
   }, [session]);
 
-  // Logged out: show the Sign in / Sign up buttons
+  // Logged out: welcome card with Sign in / Sign up
   if (!session) {
     return (
-      <View style={styles.center}>
-        <Stack.Screen options={{ title: "Home Page" }} />
-        <Text style={styles.heading}>Home Page</Text>
-        <Button title="Sign in" onPress={() => router.push("/sign-in")} />
-        <Button title="Sign up" onPress={() => router.push("/sign-up")} />
+      <View style={theme.screen}>
+        <Stack.Screen options={{ title: "Study Hub" }} />
+        <View style={theme.card}>
+          <Text style={styles.logo}>🌿</Text>
+          <Text style={[theme.title, styles.center]}>Study Hub</Text>
+          <Text style={[theme.subtitle, styles.center]}>
+            Sign in to access members-only study resources.
+          </Text>
+
+          <Pressable
+            style={({ pressed }) => [
+              theme.button,
+              pressed && theme.buttonPressed,
+            ]}
+            onPress={() => router.push("/sign-in")}
+          >
+            <Text style={theme.buttonText}>Sign in</Text>
+          </Pressable>
+
+          <Pressable
+            style={theme.buttonOutline}
+            onPress={() => router.push("/sign-up")}
+          >
+            <Text style={theme.buttonOutlineText}>Create an account</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
 
-  // Logged in: show the user's name in the nav bar and the protected list
+  // Logged in: name in the nav bar + protected list
   return (
-    <View style={styles.container}>
+    <View style={styles.page}>
       <Stack.Screen
         options={{
           title: `Hi, ${displayName}`,
           headerRight: () => (
-            <Button title="Sign out" onPress={() => router.push("/sign-out")} />
+            <Pressable
+              style={styles.headerButton}
+              onPress={() => router.push("/sign-out")}
+            >
+              <Text style={styles.headerButtonText}>Sign out</Text>
+            </Pressable>
           ),
         }}
       />
 
-      <Text style={styles.heading}>Members-only resources</Text>
+      <Text style={theme.title}>Members-only resources</Text>
+      <Text style={theme.subtitle}>
+        Only signed-in users can see this list.
+      </Text>
 
-      {loading && <ActivityIndicator />}
-      {error && <Text style={styles.error}>{error}</Text>}
+      {loading && <ActivityIndicator color={colors.primary} />}
+      {error && (
+        <View style={theme.errorBox}>
+          <Text style={theme.errorBoxText}>{error}</Text>
+        </View>
+      )}
 
       <FlatList
         data={resources}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ gap: 12 }}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.title}>{item.title}</Text>
-            {item.description && <Text>{item.description}</Text>}
+          <View style={styles.resourceCard}>
+            <Text style={styles.resourceTitle}>{item.title}</Text>
+            {item.description && (
+              <Text style={theme.muted}>{item.description}</Text>
+            )}
           </View>
         )}
         ListEmptyComponent={
-          loading ? undefined : <Text>No resources found.</Text>
+          loading ? undefined : (
+            <Text style={theme.muted}>No resources found.</Text>
+          )
         }
       />
     </View>
@@ -93,16 +132,36 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: "center", alignItems: "center", gap: 12 },
-  container: { flex: 1, padding: 24, gap: 12 },
-  heading: { fontSize: 18, fontWeight: "bold" },
-  card: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 6,
-    padding: 12,
-    marginBottom: 8,
+  page: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: colors.background,
+    width: "100%",
+    maxWidth: 720,
+    alignSelf: "center",
   },
-  title: { fontWeight: "bold" },
-  error: { color: "crimson" },
+  center: { textAlign: "center" },
+  logo: { fontSize: 48, textAlign: "center" },
+  resourceCard: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 5,
+    borderLeftColor: colors.accent,
+    gap: 4,
+    boxShadow: "0 2px 8px rgba(27, 94, 32, 0.08)",
+  },
+  resourceTitle: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: colors.primaryDark,
+  },
+  headerButton: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginRight: 12,
+  },
+  headerButtonText: { color: colors.primary, fontWeight: "bold" },
 });
