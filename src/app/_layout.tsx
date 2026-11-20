@@ -1,3 +1,4 @@
+import { colors } from "@/constants/app-theme";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -17,15 +18,28 @@ function RootNavigator() {
   // Loading screen while the session is being restored
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: "Home Page" }} />
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.primary }, // green nav bar
+        headerTintColor: colors.white, // white title and back arrow
+        headerTitleStyle: { fontWeight: "bold" },
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
+      <Stack.Screen name="index" options={{ title: "Study Hub" }} />
 
       {/* Only when logged OUT */}
       <Stack.Protected guard={!session}>
