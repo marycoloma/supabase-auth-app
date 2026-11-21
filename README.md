@@ -53,7 +53,7 @@ Expo · Expo Router · TypeScript · Supabase · React Hook Form · Zod
 
    **`Sample Table`** — public data shown on the Sign-Up screen
    - Columns: `id` (int8, primary key), `name` (varchar)
-   - Rows: Jimmy, Mary, Munachi, Camille
+   - Rows: Mary, Munachi, Camille
    - RLS enabled
    - Policy: _Enable read access for all users_ — `SELECT` for `public`
 
@@ -135,3 +135,6 @@ We then used **Claude (Anthropic)** to help with:
 - Debugging (web rendering error, duplicate routes, typed-route errors, Git merges) and drafting this README
 
 All code was tested by the team, and we can explain how each part works.
+
+
+Also note: Sklrat is Camille Tsui's Account sorry I have 2 accounts and the email got a bit messed up
