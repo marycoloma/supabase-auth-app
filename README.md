@@ -53,7 +53,7 @@ Expo · Expo Router · TypeScript · Supabase · React Hook Form · Zod
 
    **`Sample Table`** — public data shown on the Sign-Up screen
    - Columns: `id` (int8, primary key), `name` (varchar)
-   - Rows: Jimmy, Mary, Munachi, Camille
+   - Rows: Mary, Munachi, Camille
    - RLS enabled
    - Policy: _Enable read access for all users_ — `SELECT` for `public`
 
